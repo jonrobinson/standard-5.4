@@ -1,14 +1,15 @@
-<?php
+<?php namespace Tests\Application;
 
+use Tests\TestCase;
+
+use App\Events\UserRegistered;
 use App\Models\User;
-use App\Http\Controllers\GroupController;
 use Faker\Factory;
 use Faker\Generator;
+
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\Response;
-use App\Events\UserRegistered;
 use Illuminate\Support\Facades\Log;
 
 class UserCrudTest extends TestCase
@@ -16,18 +17,20 @@ class UserCrudTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function a_user_can_be_created()
+    public function test_a_user_can_be_created()
     {
         $faker = Factory::create();
         //$this->expectsEvents(UserRegistered::class);
-        $this->json('POST', '/register', [
+
+        $email = $faker->email;
+        $response = $this->json('POST', '/register', [
                 'first_name' => $faker->firstName,
                 'last_name' => $faker->lastName,
-                'email' => $faker->email,
+                'email' => $email,
                 'password' => 'somepassword',
-                'phone' => '9999999999',
-                'dob' => '1981-02-01',
-            ])->seeJson(['success' => true]);
+            ]);
+        $response->assertStatus(302);
+        $this->assertTrue(User::byEmail($email)->exists());
     }
 
     /** @test */
@@ -42,7 +45,7 @@ class UserCrudTest extends TestCase
                 'first_name' => $faker->firstName,
                 'last_name' => $faker->lastName,
                 'email' => $faker->email,
-            ])->seeJson(['success' => true]);
+            ])->assertJson(['success' => true]);
     }
 
     /** @test **/
@@ -56,7 +59,7 @@ class UserCrudTest extends TestCase
                 'password' => 'somepassword',
                 'new_password' => 'passwordtwo',
                 'new_password_confirmation' => 'passwordtwo',
-            ])->seeJson(['success' => true]);
+            ])->assertJson(['success' => true]);
     }
 
     /** @test */
@@ -67,7 +70,7 @@ class UserCrudTest extends TestCase
         $this->actingAs($user, 'api')
              ->json('POST', '/api/user/check-age-on-date', [
                 'dob' => '1981-09-02',
-            ])->seeJson(['success' => true]);
+            ])->assertJson(['success' => true]);
     }
 
     /** @test */
@@ -78,7 +81,7 @@ class UserCrudTest extends TestCase
         $this->actingAs($user, 'api')
              ->json('POST', '/api/user/check-age-on-date', [
                 'dob' => '2004-02-14',
-            ])->seeJson(['success' => false]);
+            ])->assertJson(['success' => false]);
     }
 
     /** @test */
@@ -89,7 +92,7 @@ class UserCrudTest extends TestCase
         $this->json('GET', '/api/user/confirm-email/' . $user->token)
             ->seeJson(['success' => true]);
         $user = $user->fresh();
-        $this->assertTrue($user->email_confirmed);
+        $this->assertJson($user->email_confirmed);
     }
 
     /***************************************************************************************
@@ -105,8 +108,6 @@ class UserCrudTest extends TestCase
                 'last_name' => $faker->lastName,
                 'email' => $faker->email,
                 'password' => 'somepassword',
-                'phone' => '9999999999',
-                'dob' => '1981-02-01',
             ])->getContent();
         $response = json_decode($response);
         return User::byEmail($response->data->user->email)->first();

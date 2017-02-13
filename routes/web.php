@@ -10,7 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::auth();
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/{catchall?}', function () {
+    return response()->view('main.index');
+})->where('catchall', '(.*)');
