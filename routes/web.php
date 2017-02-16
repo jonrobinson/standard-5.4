@@ -10,7 +10,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+/***************************************************************************************
+ ** AUTHENTICATION
+ ***************************************************************************************/
+
 Route::auth();
+Route::get('user/confirm-email/{token}', 'UserController@confirmEmail');
+
 Route::get('/', function () {
     return view('welcome');
 });

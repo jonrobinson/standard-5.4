@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Models\User;
+use App\Events\UserRegistered;
 use Log;
 
 class RegisterController extends Controller
@@ -48,7 +49,6 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        log::error(json_encode($data));
         return Validator::make($data, [
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
@@ -65,11 +65,13 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user =  User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+        event(new UserRegistered($user));
+        return $user;
     }
 }

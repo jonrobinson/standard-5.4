@@ -20,7 +20,7 @@ class UserCrudTest extends TestCase
     public function test_a_user_can_be_created()
     {
         $faker = Factory::create();
-        //$this->expectsEvents(UserRegistered::class);
+        $this->expectsEvents(UserRegistered::class);
 
         $email = $faker->email;
         $response = $this->json('POST', '/register', [
@@ -52,36 +52,15 @@ class UserCrudTest extends TestCase
     public function a_users_password_can_change()
     {
         // create user
-        $user = $this->makeUser();
+        $password = 'somepassword';
+        $user = factory(User::class)->create(['password' => bcrypt($password)]);
 
         $this->actingAs($user, 'api')
              ->json('POST', '/api/user/update-password', [
-                'password' => 'somepassword',
+                'password' => $password,
                 'new_password' => 'passwordtwo',
                 'new_password_confirmation' => 'passwordtwo',
             ])->assertJson(['success' => true]);
-    }
-
-    /** @test */
-    public function we_can_check_a_persons_age_on_date()
-    {
-        $user = $this->makeUser();
-
-        $this->actingAs($user, 'api')
-             ->json('POST', '/api/user/check-age-on-date', [
-                'dob' => '1981-09-02',
-            ])->assertJson(['success' => true]);
-    }
-
-    /** @test */
-    public function a_persons_age_fails()
-    {
-        $user = $this->makeUser();
-
-        $this->actingAs($user, 'api')
-             ->json('POST', '/api/user/check-age-on-date', [
-                'dob' => '2004-02-14',
-            ])->assertJson(['success' => false]);
     }
 
     /** @test */
@@ -89,8 +68,8 @@ class UserCrudTest extends TestCase
     {
         $user = $this->makeUser();
 
-        $this->json('GET', '/api/user/confirm-email/' . $user->token)
-            ->seeJson(['success' => true]);
+        $this->json('GET', '/user/confirm-email/' . $user->token)
+             ->assertJson(['success' => true]);
         $user = $user->fresh();
         $this->assertJson($user->email_confirmed);
     }

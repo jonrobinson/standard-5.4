@@ -45,4 +45,13 @@ class UserController extends Controller
     {
         return $this->success();
     }
+
+    public function confirmEmail(string $token)
+    {
+        $user = User::byToken($token)->first();
+        if ($user) {
+            $user->setEmailConfirmed();
+        }
+        return view('onboarding.confirm_email', ['user' => $user]);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -37,6 +38,11 @@ class User extends Authenticatable
     public function scopeByEmail($query, string $email)
     {
         return $query->where('email', $email);
+    }
+
+    public function scopeByToken($query, string $token)
+    {
+        return $query->where('token', $token);
     }
 
     /***************************************************************************************
