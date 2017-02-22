@@ -67,4 +67,10 @@ class User extends Authenticatable
         $this->save();
     }
 
+    public function setEmailConfirmed()
+    {
+        $this->email_confirmed = true;
+        $this->save();
+    }
+
 }

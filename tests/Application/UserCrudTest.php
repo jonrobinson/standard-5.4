@@ -63,17 +63,6 @@ class UserCrudTest extends TestCase
             ])->assertJson(['success' => true]);
     }
 
-    /** @test */
-    public function we_can_confirm_a_users_email()
-    {
-        $user = $this->makeUser();
-
-        $this->json('GET', '/user/confirm-email/' . $user->token)
-             ->assertJson(['success' => true]);
-        $user = $user->fresh();
-        $this->assertJson($user->email_confirmed);
-    }
-
     /***************************************************************************************
      ** HELPERS
      ***************************************************************************************/
@@ -82,13 +71,13 @@ class UserCrudTest extends TestCase
     {
         $this->expectsEvents(UserRegistered::class);
         $faker = Factory::create();
-        $response = $this->call('POST', '/register', [
+        $email = $faker->email;
+        $this->call('POST', '/register', [
                 'first_name' => $faker->firstName,
                 'last_name' => $faker->lastName,
-                'email' => $faker->email,
+                'email' => $email,
                 'password' => 'somepassword',
-            ])->getContent();
-        $response = json_decode($response);
-        return User::byEmail($response->data->user->email)->first();
+            ]);
+        return User::byEmail($email)->first();
     }
 }

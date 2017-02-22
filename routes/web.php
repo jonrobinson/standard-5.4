@@ -24,3 +24,7 @@ Route::get('/', function () {
 Route::get('/{catchall?}', function () {
     return response()->view('main.index');
 })->where('catchall', '(.*)');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
