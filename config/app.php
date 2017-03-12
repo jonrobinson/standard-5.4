@@ -169,6 +169,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Laratrust\LaratrustServiceProvider::class,
+        Aws\Laravel\AwsServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -230,6 +231,7 @@ return [
         
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
         'Laratrust'   => Laratrust\LaratrustFacade::class,
+        'AWS' => Aws\Laravel\AwsFacade::class,
     ],
 
 ];
