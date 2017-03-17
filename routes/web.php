@@ -15,16 +15,17 @@
  ** AUTHENTICATION
  ***************************************************************************************/
 
-Route::auth();
 Route::get('user/confirm-email/{token}', 'UserController@confirmEmail');
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('main.index');
+})->name('home');
+
+Route::get('/logout', function () {
+    if (Auth::check()) {
+        Auth::logout();
+    }
+    return redirect()->route('home');
 });
-Route::get('/{catchall?}', function () {
-    return response()->view('main.index');
-})->where('catchall', '(.*)');
 
 Auth::routes();
-
-Route::get('/home', 'HomeController@index');

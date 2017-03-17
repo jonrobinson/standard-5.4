@@ -52,15 +52,4 @@ class Controller extends BaseController
     {
         return $this->error([], $this->required_error_message);
     }
-
-    protected function formatValidationErrors(Validator $validator)
-    {
-        // get all errors
-        $errors = $validator->errors()->all();
-
-        // get first error for message
-        $collection = collect($errors);
-        $first_error = $collection->first();
-        return Responder::noJsonError($errors, $first_error);
-    }
 }
