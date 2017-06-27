@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('token');
             $table->rememberToken();
-            $table->boolean('email_confirmed')->default(0);
+            $table->boolean('completed_onboarding')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Log;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -23,8 +24,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-
+        // IF YOU GET THIS ERROR: 
+        // NotFoundHttpException in RouteCollection.php line 179: 
+        // RUN: vagrant provision
+        
         parent::boot();
     }
 
@@ -54,6 +57,10 @@ class RouteServiceProvider extends ServiceProvider
         Route::middleware('web')
              ->namespace($this->namespace)
              ->group(base_path('routes/web.php'));
+
+        Route::middleware('subdomain-web')
+             ->namespace($this->namespace)
+             ->group(base_path('routes/subdomain-web.php'));
     }
 
     /**

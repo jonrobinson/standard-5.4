@@ -24,3 +24,11 @@ if (!function_exists('displayMoney')) {
     }
 }
 
+if (!function_exists('subdomainUrl')) {
+    function subdomainUrl(string $subdomain) 
+    {
+        $http = env('APP_ENV') == 'local' ? 'http://' : 'https://';
+        return $http . $subdomain . '.' . env('APP_BASE_URL');
+    }
+}
+

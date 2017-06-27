@@ -17,7 +17,7 @@ class User extends Authenticatable
     protected $hidden = [ 'id', 'password', 'remember_token', 'created_at', 'updated_at', 'deleted_at'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts = [
-        'email_confirmed' => 'boolean',
+        'completed_onboarding' => 'boolean',
     ];
 
     /**
@@ -48,6 +48,15 @@ class User extends Authenticatable
     }
 
     /***************************************************************************************
+     ** RELATIONS
+     ***************************************************************************************/
+
+    public function organizations()
+    {
+        return $this->belongsToMany(\App\Models\Organization::class, 'organizations_users', 'user_id', 'organization_id');
+    }
+
+    /***************************************************************************************
      ** CRUD
      ***************************************************************************************/
 
@@ -75,6 +84,19 @@ class User extends Authenticatable
         $this->save();
     }
 
+    /***************************************************************************************
+     ** GENERAL
+     ***************************************************************************************/
+
+    public function getPrimarySubdomain()
+    {
+        return $this->organizations()->first()->slug;
+    }
+
+    /***************************************************************************************
+     ** HELPERS
+     ***************************************************************************************/
+
     public function isAdmin() 
     {
         return $this->hasRole('admin');
@@ -83,5 +105,15 @@ class User extends Authenticatable
     public function isSuperAdmin()
     {
         return $this->hasRole('superadmin');
+    }
+
+    /***************************************************************************************
+     ** SETTERS
+     ***************************************************************************************/
+
+    public function setOnboardingCompleted()
+    {
+        $this->completed_onboarding = true;
+        $this->save();
     }
 }
